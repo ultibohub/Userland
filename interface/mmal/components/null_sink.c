@@ -118,6 +118,21 @@ static MMAL_STATUS_T mmal_component_create_null_sink(const char *name, MMAL_COMP
    return status;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_null_sink_enable = 0;
+
+extern void mmal_register_component_null_sink(void);
+
+void mmal_include_component_null_sink(void)
+{
+   if (mmal_register_null_sink_enable)
+   {
+     mmal_register_component_null_sink();
+   }
+}
+#endif
+
 MMAL_CONSTRUCTOR(mmal_register_component_null_sink);
 void mmal_register_component_null_sink(void)
 {

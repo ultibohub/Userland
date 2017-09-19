@@ -27,7 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "interface/khronos/common/khrn_options.h"
 
+#ifndef ULTIBO
 #include <memory.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 

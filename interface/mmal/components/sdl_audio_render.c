@@ -271,6 +271,21 @@ static MMAL_STATUS_T mmal_component_create_sdl(const char *name, MMAL_COMPONENT_
    return MMAL_ENOMEM;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_sdl_audio_enable = 0;
+
+extern void mmal_register_component_sdl_audio(void);
+
+void mmal_include_component_sdl_audio(void)
+{
+   if (mmal_register_sdl_audio_enable)
+   {
+     mmal_register_component_sdl_audio();
+   }
+}
+#endif
+
 MMAL_CONSTRUCTOR(mmal_register_component_sdl_audio);
 void mmal_register_component_sdl_audio(void)
 {

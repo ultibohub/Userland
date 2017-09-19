@@ -282,7 +282,11 @@ VCHPRE_ void VCHPOST_ vc_vchi_cec_init(VCHI_INSTANCE_T initialise_instance, VCHI
 
    //Create the notifier task
    vcos_thread_attr_init(&attrs);
+#ifdef ULTIBO   
+   vcos_thread_attr_setstacksize(&attrs, 32768);
+#else
    vcos_thread_attr_setstacksize(&attrs, 2048);
+#endif
    vcos_thread_attr_settimeslice(&attrs, 1);
 
    //Initialise logging

@@ -28,7 +28,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdarg.h>
 
 //includes
+#ifndef ULTIBO
 #include <memory.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

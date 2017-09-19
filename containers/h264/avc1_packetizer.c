@@ -339,5 +339,18 @@ VC_CONTAINER_STATUS_T avc1_packetizer_open( VC_PACKETIZER_T *p_ctx )
    return VC_CONTAINER_SUCCESS;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the packetizer registration */
+static int packetizer_register_avc1_enable = 0;
+
+void avc1_packetizer_include(void)
+{
+   if (packetizer_register_avc1_enable)
+   {
+     avc1_packetizer_open(NULL);
+   }
+}
+#endif
+
 /*****************************************************************************/
 VC_PACKETIZER_REGISTER(avc1_packetizer_open,  "avc1");

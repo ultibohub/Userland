@@ -27,9 +27,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <unistd.h>
 #include <fcntl.h>
+#ifndef ULTIBO
 #include <sys/ioctl.h>
+#endif
 #include <stdio.h>
-
 #include "vchiq.h"
 #include "vchiq_cfg.h"
 #include "vchiq_ioctl.h"
@@ -41,7 +42,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define VCHIQ_MAX_INSTANCE_SERVICES 32
 #define MSGBUF_SIZE (VCHIQ_MAX_MSG_SIZE + sizeof(VCHIQ_HEADER_T))
 
+#ifdef ULTIBO
+
+extern int vc4_vchiq_open();
+
+extern int vc4_vchiq_dup(int device);
+
+extern int vc4_vchiq_close(int device);
+
+extern int vc4_vchiq_ioctl(int device, int ioctl_code, int argument);
+        
+// Call ioctl only once instead of retrying
+#define RETRY(r,x)  r = x
+#define ioctl(a, b ,c) vc4_vchiq_ioctl(a, b, c)
+
+#else
 #define RETRY(r,x) do { r = x; } while ((r == -1) && (errno == EINTR))
+#endif
 
 #define VCOS_LOG_CATEGORY (&vchiq_lib_log_category)
 
@@ -199,7 +216,11 @@ vchiq_shutdown(VCHIQ_INSTANCE_T instance)
          instance->connected = 0;
       }
 
+#ifdef ULTIBO
+      vc4_vchiq_close(instance->fd);
+#else
       close(instance->fd);
+#endif
       instance->fd = -1;
    }
    else if (instance->initialised > 1)
@@ -606,7 +627,11 @@ vchiq_get_config(VCHIQ_INSTANCE_T instance,
    return (ret >= 0) ? VCHIQ_SUCCESS : VCHIQ_ERROR;
 }
 
+#ifdef ULTIBO
+VCHIQ_STATUS_T
+#else
 int32_t
+#endif
 vchiq_use_service( const VCHIQ_SERVICE_HANDLE_T handle )
 {
    VCHIQ_SERVICE_T *service = find_service_by_handle(handle);
@@ -619,7 +644,11 @@ vchiq_use_service( const VCHIQ_SERVICE_HANDLE_T handle )
    return ret;
 }
 
+#ifdef ULTIBO
+VCHIQ_STATUS_T
+#else
 int32_t
+#endif
 vchiq_release_service( const VCHIQ_SERVICE_HANDLE_T handle )
 {
    VCHIQ_SERVICE_T *service = find_service_by_handle(handle);
@@ -1420,7 +1449,9 @@ static VCHIQ_INSTANCE_T
 vchiq_lib_init(const int dev_vchiq_fd)
 {
    static int mutex_initialised = 0;
+#ifndef ULTIBO   
    static VCOS_MUTEX_T vchiq_lib_mutex;
+#endif   
    VCHIQ_INSTANCE_T instance = &vchiq_instance;
 
    vcos_global_lock();
@@ -1440,8 +1471,13 @@ vchiq_lib_init(const int dev_vchiq_fd)
    if (instance->initialised == 0)
    {
       instance->fd = dev_vchiq_fd == -1 ?
+#ifdef ULTIBO
+         vc4_vchiq_open() :
+         vc4_vchiq_dup(dev_vchiq_fd);
+#else
          open("/dev/vchiq", O_RDWR) :
          dup(dev_vchiq_fd);
+#endif
       if (instance->fd >= 0)
       {
          VCHIQ_GET_CONFIG_T args;
@@ -1475,7 +1511,11 @@ vchiq_lib_init(const int dev_vchiq_fd)
             {
                vcos_log_error("Very incompatible VCHIQ library - cannot retrieve driver version");
             }
+#ifdef ULTIBO
+            vc4_vchiq_close(instance->fd);
+#else
             close(instance->fd);
+#endif
             instance = NULL;
          }
       }

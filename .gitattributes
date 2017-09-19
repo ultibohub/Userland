@@ -1,0 +1,5 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Adjust behavior for build scripts
+buildme.*	text eol=lf

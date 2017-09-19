@@ -477,6 +477,21 @@ error:
    return status;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_scheduler_enable = 0;
+
+extern void mmal_register_component_scheduler(void);
+
+void mmal_include_component_scheduler(void)
+{
+   if (mmal_register_scheduler_enable)
+   {
+     mmal_register_component_scheduler();
+   }
+}
+#endif
+
 MMAL_CONSTRUCTOR(mmal_register_component_scheduler);
 void mmal_register_component_scheduler(void)
 {

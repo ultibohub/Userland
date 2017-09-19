@@ -987,11 +987,41 @@ static MMAL_STATUS_T mmal_component_create_writer(const char *name, MMAL_COMPONE
    return status;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_container_reader_enable = 0;
+
+extern void mmal_register_component_container_reader(void);
+
+void mmal_include_component_container_reader(void)
+{
+   if (mmal_register_container_reader_enable)
+   {
+     mmal_register_component_container_reader();
+   }
+}
+#endif
+
 MMAL_CONSTRUCTOR(mmal_register_component_container_reader);
 void mmal_register_component_container_reader(void)
 {
    mmal_component_supplier_register("container_reader", mmal_component_create_reader);
 }
+
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_container_writer_enable = 0;
+
+extern void mmal_register_component_container_writer(void);
+
+void mmal_include_component_container_writer(void)
+{
+   if (mmal_register_container_writer_enable)
+   {
+     mmal_register_component_container_writer();
+   }
+}
+#endif
 
 MMAL_CONSTRUCTOR(mmal_register_component_container_writer);
 void mmal_register_component_container_writer(void)

@@ -1496,6 +1496,21 @@ fail:
    return status;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_videocore_enable = 0;
+
+extern void mmal_register_component_videocore(void);
+
+void mmal_include_component_videocore(void)
+{
+   if (mmal_register_videocore_enable)
+   {
+     mmal_register_component_videocore();
+   }
+}
+#endif
+
 MMAL_CONSTRUCTOR(mmal_register_component_videocore);
 void mmal_register_component_videocore(void)
 {

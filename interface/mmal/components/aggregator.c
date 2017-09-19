@@ -181,6 +181,21 @@ static MMAL_STATUS_T mmal_component_create_aggregator(const char *name, MMAL_COM
    return MMAL_ENOSYS;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_aggregator_enable = 0;
+
+extern void mmal_register_component_aggregator(void);
+
+void mmal_include_component_aggregator(void)
+{
+   if (mmal_register_aggregator_enable)
+   {
+     mmal_register_component_aggregator();
+   }
+}
+#endif
+
 MMAL_CONSTRUCTOR(mmal_register_component_aggregator);
 void mmal_register_component_aggregator(void)
 {

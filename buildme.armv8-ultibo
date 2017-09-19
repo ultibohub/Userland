@@ -1,0 +1,16 @@
+#!/bin/bash
+BUILDTYPE=Release
+
+if [ "$1" = "--debug" ]; then
+	BUILDTYPE=Debug
+	shift
+fi
+
+BUILDSUBDIR=`echo $BUILDTYPE | tr '[A-Z]' '[a-z]'`;
+
+mkdir -p build/armv8-ultibo/$BUILDSUBDIR
+pushd build/armv8-ultibo/$BUILDSUBDIR
+cmake -DULTIBO=TRUE -DCMAKE_TOOLCHAIN_FILE=../../../makefiles/cmake/toolchains/armv8-ultibo.cmake -DCMAKE_BUILD_TYPE=$BUILDTYPE ../../..
+make -j `nproc`
+
+popd

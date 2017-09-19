@@ -230,7 +230,11 @@ ILCS_SERVICE_T *ilcs_init(VCHIQ_STATE_T *state, void **connection, ILCS_CONFIG_T
       goto fail_ilcs_common;
 
    vcos_thread_attr_init(&thread_attrs);
+#ifdef ULTIBO   
+   vcos_thread_attr_setstacksize(&thread_attrs, 32768);
+#else
    vcos_thread_attr_setstacksize(&thread_attrs, 4096);
+#endif
 
    snprintf(st->name, sizeof(st->name), "ILCS_%s", use_memmgr ? "VC" : "HOST");
 

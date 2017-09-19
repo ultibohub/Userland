@@ -891,6 +891,20 @@ static MMAL_STATUS_T mmal_component_create_clock(const char *name, MMAL_COMPONEN
    return status;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_clock_enable = 0;
+
+extern void mmal_register_component_clock(void);
+
+void mmal_include_component_clock(void)
+{
+   if (mmal_register_clock_enable)
+   {
+     mmal_register_component_clock();
+   }
+}
+#endif
 
 /*****************************************************************************/
 MMAL_CONSTRUCTOR(mmal_register_component_clock);

@@ -338,6 +338,21 @@ static MMAL_STATUS_T mmal_component_create_splitter(const char *name, MMAL_COMPO
    return status;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_splitter_enable = 0;
+
+extern void mmal_register_component_splitter(void);
+
+void mmal_include_component_splitter(void)
+{
+   if (mmal_register_splitter_enable)
+   {
+     mmal_register_component_splitter();
+   }
+}
+#endif
+
 MMAL_CONSTRUCTOR(mmal_register_component_splitter);
 void mmal_register_component_splitter(void)
 {

@@ -2,7 +2,11 @@ SET( SOURCE_DIR . )
 
 # We support building both static and shared libraries
 if (NOT DEFINED LIBRARY_TYPE)
-set(LIBRARY_TYPE SHARED)
+   if(ULTIBO)
+      set(LIBRARY_TYPE STATIC)
+   else()
+      set(LIBRARY_TYPE SHARED)
+   endif()
 endif (NOT DEFINED LIBRARY_TYPE)
 
 # Make sure the compiler can find the necessary include files
@@ -10,6 +14,10 @@ include_directories (${SOURCE_DIR}/.. ${SOURCE_DIR}/../interface/vcos)
 
 # Needed for the container loader
 add_definitions(-DDL_PATH_PREFIX="${VMCS_PLUGIN_DIR}/")
+
+if(ULTIBO)
+  add_definitions(-DENABLE_CONTAINERS_STANDALONE)
+endif()
 
 SET( GCC_COMPILER_FLAGS -Wall -g -O2 -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wcast-qual -Wwrite-strings -Wundef )
 SET( GCC_COMPILER_FLAGS ${GCC_COMPILER_FLAGS} -Wextra )#-Wno-missing-field-initializers )
@@ -120,5 +128,7 @@ if (${LIBRARY_TYPE} STREQUAL STATIC)
 target_link_libraries(containers ${container_readers} ${container_writers})
 endif (${LIBRARY_TYPE} STREQUAL STATIC)
 
-# Test apps
-add_subdirectory(test)
+if(NOT ULTIBO)
+   # Test apps
+   add_subdirectory(test)
+endif()

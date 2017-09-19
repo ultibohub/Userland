@@ -427,5 +427,18 @@ VC_CONTAINER_STATUS_T mpgv_packetizer_open( VC_PACKETIZER_T *p_ctx )
    return VC_CONTAINER_SUCCESS;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the packetizer registration */
+static int packetizer_register_mpgv_enable = 0;
+
+void mpgv_packetizer_include(void)
+{
+   if (packetizer_register_mpgv_enable)
+   {
+     mpgv_packetizer_open(NULL);
+   }
+}
+#endif
+
 /*****************************************************************************/
 VC_PACKETIZER_REGISTER(mpgv_packetizer_open,  "mpgv");

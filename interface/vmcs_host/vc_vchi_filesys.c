@@ -195,7 +195,11 @@ int vc_vchi_filesys_init (VCHI_INSTANCE_T initialise_instance, VCHI_CONNECTION_T
    vcos_assert( success == 0 );
 
    vcos_thread_attr_init(&attrs);
+#ifdef ULTIBO   
+   vcos_thread_attr_setstacksize(&attrs, 32768);
+#else
    vcos_thread_attr_setstacksize(&attrs, 4000);
+#endif
    vcos_thread_attr_settimeslice(&attrs, 1);
 
    vc_filesys_client.initialised = 1;

@@ -1,11 +1,19 @@
 # We support building both static and shared libraries
 if (NOT DEFINED LIBRARY_TYPE)
-set(LIBRARY_TYPE SHARED)
+   if(ULTIBO)
+      set(LIBRARY_TYPE STATIC)
+   else()
+      set(LIBRARY_TYPE SHARED)
+   endif()
 endif (NOT DEFINED LIBRARY_TYPE)
 
 add_definitions(-Wall -Werror)
 
-add_library(mmal SHARED util/mmal_util.c)
+if(ULTIBO)
+   add_library(mmal ${LIBRARY_TYPE} util/mmal_util.c)
+else()   
+   add_library(mmal SHARED util/mmal_util.c)
+endif()
 
 add_subdirectory(core)
 add_subdirectory(util)

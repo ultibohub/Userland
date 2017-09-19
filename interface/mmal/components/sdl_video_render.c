@@ -387,6 +387,21 @@ static MMAL_STATUS_T mmal_component_create_sdl(const char *name, MMAL_COMPONENT_
    return status;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_sdl_enable = 0;
+
+extern void mmal_register_component_sdl(void);
+
+void mmal_include_component_sdl(void)
+{
+   if (mmal_register_sdl_enable)
+   {
+     mmal_register_component_sdl();
+   }
+}
+#endif
+
 MMAL_CONSTRUCTOR(mmal_register_component_sdl);
 void mmal_register_component_sdl(void)
 {

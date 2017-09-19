@@ -320,6 +320,21 @@ static MMAL_STATUS_T mmal_component_create_copy(const char *name, MMAL_COMPONENT
    return status;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_copy_enable = 0;
+
+extern void mmal_register_component_copy(void);
+
+void mmal_include_component_copy(void)
+{
+   if (mmal_register_copy_enable)
+   {
+     mmal_register_component_copy();
+   }
+}
+#endif
+
 MMAL_CONSTRUCTOR(mmal_register_component_copy);
 void mmal_register_component_copy(void)
 {

@@ -303,7 +303,11 @@ VCHPRE_ int VCHPOST_ vc_vchi_tv_init(VCHI_INSTANCE_T initialise_instance, VCHI_C
 
    //Create the notifier task
    vcos_thread_attr_init(&attrs);
+#ifdef ULTIBO   
+   vcos_thread_attr_setstacksize(&attrs, 32768);
+#else
    vcos_thread_attr_setstacksize(&attrs, 4096);
+#endif
    vcos_thread_attr_settimeslice(&attrs, 1);
 
    status = vcos_thread_create(&tvservice_notify_task, "HTV Notify", &attrs, tvservice_notify_func, &tvservice_client);

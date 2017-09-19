@@ -280,6 +280,21 @@ static MMAL_STATUS_T mmal_component_create_artificial_camera(const char *name, M
    return status;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_artificial_camera_enable = 0;
+
+extern void mmal_register_component_artificial_camera(void);
+
+void mmal_include_component_artificial_camera(void)
+{
+   if (mmal_register_artificial_camera_enable)
+   {
+     mmal_register_component_artificial_camera();
+   }
+}
+#endif
+
 MMAL_CONSTRUCTOR(mmal_register_component_artificial_camera);
 void mmal_register_component_artificial_camera(void)
 {

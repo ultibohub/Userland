@@ -26,10 +26,19 @@ add_library(vcilcs
 target_link_libraries(vcilcs brcmEGL brcmGLESv2 khrn_client vchiq_arm vcos)
 
 # vchostif needs ilcore as well (vmcs_main pulls it in)
-target_link_libraries(vchostif vchiq_arm vcos vcfiled_check)
+if(ULTIBO)
+   target_link_libraries(vchostif vchiq_arm vcos)
+else()
+   target_link_libraries(vchostif vchiq_arm vcos vcfiled_check)
+endif()
 
 #target_link_libraries(bufman WFC)
 
-add_subdirectory(linux/vcfiled)
+if(ULTIBO)
+   #To Do
+else()
+   add_subdirectory(linux/vcfiled)
+endif()
+
 install(TARGETS vchostif vcilcs DESTINATION lib)
 

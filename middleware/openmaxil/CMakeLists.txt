@@ -12,13 +12,23 @@ if (VIDEOCORE_SIMULATION)
 
    # VC-simulation build.
 
-   add_library (openmaxil SHARED
- #               core/ilcore.c
-                core/ril_top.c
-                core/ilmalloc.c
-                core/ilvlls.c
-                core/ilfifo.c
-                core/ilutil.c)
+   if(ULTIBO)
+      add_library (openmaxil STATIC
+    #               core/ilcore.c
+                   core/ril_top.c
+                   core/ilmalloc.c
+                   core/ilvlls.c
+                   core/ilfifo.c
+                   core/ilutil.c)
+   else()
+      add_library (openmaxil SHARED
+    #               core/ilcore.c
+                   core/ril_top.c
+                   core/ilmalloc.c
+                   core/ilvlls.c
+                   core/ilfifo.c
+                   core/ilutil.c)
+   endif()   
 
    add_subdirectory (components)
 
@@ -36,14 +46,25 @@ else ()
 
    add_definitions (-DVLL_PATH_PREFIX="${VMCS_PLUGIN_DIR}/")
 
-   add_library (openmaxil SHARED 
-                ../../host_applications/framework/common/ilcore.c
-#                core/ilcore.c
-#                core/ril_top.c
-#                core/ilmalloc.c
-#                core/ilvlls.c
-#                core/ilfifo.c
+   if(ULTIBO)
+      add_library (openmaxil STATIC
+                   ../../host_applications/framework/common/ilcore.c
+   #                core/ilcore.c
+   #                core/ril_top.c
+   #                core/ilmalloc.c
+   #                core/ilvlls.c
+   #                core/ilfifo.c
                 )
+   else()
+      add_library (openmaxil SHARED 
+                   ../../host_applications/framework/common/ilcore.c
+   #                core/ilcore.c
+   #                core/ril_top.c
+   #                core/ilmalloc.c
+   #                core/ilvlls.c
+   #                core/ilfifo.c
+                )
+   endif()   
 
    target_link_libraries (openmaxil vcilcs vcos dl)
 

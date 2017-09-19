@@ -284,5 +284,18 @@ VC_CONTAINER_STATUS_T mpga_packetizer_open( VC_PACKETIZER_T *p_ctx )
    return VC_CONTAINER_SUCCESS;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the packetizer registration */
+static int packetizer_register_mpga_enable = 0;
+
+void mpga_packetizer_include(void)
+{
+   if (packetizer_register_mpga_enable)
+   {
+     mpga_packetizer_open(NULL);
+   }
+}
+#endif
+
 /*****************************************************************************/
 VC_PACKETIZER_REGISTER(mpga_packetizer_open,  "mpga");

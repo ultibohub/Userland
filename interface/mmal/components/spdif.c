@@ -489,6 +489,21 @@ static MMAL_STATUS_T mmal_component_create_spdif(const char *name, MMAL_COMPONEN
    return status;
 }
 
+#ifdef ULTIBO
+/* Function to force import the static library and include the component registration */
+static int mmal_register_spdif_enable = 0;
+
+extern void mmal_register_component_spdif(void);
+
+void mmal_include_component_spdif(void)
+{
+   if (mmal_register_spdif_enable)
+   {
+     mmal_register_component_spdif();
+   }
+}
+#endif
+
 MMAL_CONSTRUCTOR(mmal_register_component_spdif);
 void mmal_register_component_spdif(void)
 {

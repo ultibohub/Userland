@@ -447,6 +447,14 @@ static OMX_ERRORTYPE vcil_out_addBuffer(OMX_IN OMX_HANDLETYPE hComponent,
    return resp.err;
 }
 
+#ifdef ULTIBO
+extern int eglIntOpenMAXILDoneMarker(void* component_handle, void *egl_image);
+
+static int local_eglIntOpenMAXILDoneMarker(void* component_handle, void *egl_image)
+{
+   return eglIntOpenMAXILDoneMarker(component_handle, egl_image);
+}
+#else
 static VCOS_ONCE_T loaded_eglIntOpenMAXILDoneMarker = VCOS_ONCE_INIT;
 static int (*local_eglIntOpenMAXILDoneMarker) (void* component_handle, void *egl_image) = NULL;
 
@@ -470,6 +478,7 @@ static void load_eglIntOpenMAXILDoneMarker(void)
       vc_assert(local_eglIntOpenMAXILDoneMarker != NULL);
    }
 }
+#endif
 
 static OMX_ERRORTYPE vcil_out_UseEGLImage(OMX_IN OMX_HANDLETYPE hComponent,
       OMX_INOUT OMX_BUFFERHEADERTYPE** ppBufferHdr,
@@ -477,8 +486,10 @@ static OMX_ERRORTYPE vcil_out_UseEGLImage(OMX_IN OMX_HANDLETYPE hComponent,
       OMX_IN OMX_PTR pAppPrivate,
       OMX_IN void* eglImage)
 {
+#ifndef ULTIBO
    /* Load eglIntOpenMAXILDoneMarker() and libEGL here, it will be needed later */
    vcos_once(&loaded_eglIntOpenMAXILDoneMarker, load_eglIntOpenMAXILDoneMarker);
+#endif
 
    return vcil_out_addBuffer(hComponent, ppBufferHdr, nPortIndex, pAppPrivate, 0, NULL, eglImage, IL_USE_EGL_IMAGE);
 }
