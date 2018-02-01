@@ -86,6 +86,9 @@ OMX_U32 mmalil_buffer_flags_to_omx(uint32_t flags)
       omx_flags |= OMX_BUFFERFLAG_INTERLACED;
    if (flags & MMAL_BUFFER_HEADER_VIDEO_FLAG_TOP_FIELD_FIRST)
      omx_flags |= OMX_BUFFERFLAG_TOP_FIELD_FIRST;
+   if (flags & MMAL_BUFFER_HEADER_FLAG_NAL_END)
+     omx_flags |= OMX_BUFFERFLAG_ENDOFNAL;
+
    if (flags & MMAL_BUFFER_HEADER_FLAG_USER0)
       omx_flags |= 1<<28;
    if (flags & MMAL_BUFFER_HEADER_FLAG_USER1)
@@ -124,6 +127,9 @@ uint32_t mmalil_buffer_flags_to_mmal(OMX_U32 flags)
       mmal_flags |= MMAL_BUFFER_HEADER_VIDEO_FLAG_INTERLACED;
    if (flags & OMX_BUFFERFLAG_TOP_FIELD_FIRST)
       mmal_flags |= MMAL_BUFFER_HEADER_VIDEO_FLAG_TOP_FIELD_FIRST;
+   if (flags & OMX_BUFFERFLAG_ENDOFNAL)
+      mmal_flags |= MMAL_BUFFER_HEADER_FLAG_NAL_END;
+
    if (flags & 1<<28)
       mmal_flags |= MMAL_BUFFER_HEADER_FLAG_USER0;
    if (flags & 1<<29)
@@ -725,6 +731,9 @@ static struct {
    {MMAL_ENCODING_RGBA_SLICE,     OMX_COLOR_Format32bitABGR8888},
    {MMAL_ENCODING_EGL_IMAGE,      OMX_COLOR_FormatBRCMEGL},
    {MMAL_ENCODING_BAYER_SBGGR8,   OMX_COLOR_FormatRawBayer8bit},
+   {MMAL_ENCODING_BAYER_SGRBG8,   OMX_COLOR_FormatRawBayer8bit},
+   {MMAL_ENCODING_BAYER_SGBRG8,   OMX_COLOR_FormatRawBayer8bit},
+   {MMAL_ENCODING_BAYER_SRGGB8,   OMX_COLOR_FormatRawBayer8bit},
    {MMAL_ENCODING_BAYER_SBGGR10P, OMX_COLOR_FormatRawBayer10bit},
    {MMAL_ENCODING_BAYER_SGRBG10P, OMX_COLOR_FormatRawBayer10bit},
    {MMAL_ENCODING_BAYER_SGBRG10P, OMX_COLOR_FormatRawBayer10bit},
