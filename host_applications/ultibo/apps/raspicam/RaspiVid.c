@@ -478,6 +478,39 @@ static void default_status(RASPIVID_STATE *state)
    raspicamcontrol_set_defaults(&state->camera_parameters);
 }
 
+static void check_camera_model(int cam_num)
+{
+   MMAL_COMPONENT_T *camera_info;
+   MMAL_STATUS_T status;
+
+   // Try to get the camera name
+   status = mmal_component_create(MMAL_COMPONENT_DEFAULT_CAMERA_INFO, &camera_info);
+   if (status == MMAL_SUCCESS)
+   {
+      MMAL_PARAMETER_CAMERA_INFO_T param;
+      param.hdr.id = MMAL_PARAMETER_CAMERA_INFO;
+      param.hdr.size = sizeof(param)-4;  // Deliberately undersize to check firmware version
+      status = mmal_port_parameter_get(camera_info->control, &param.hdr);
+
+      if (status != MMAL_SUCCESS)
+      {
+         // Running on newer firmware
+         param.hdr.size = sizeof(param);
+         status = mmal_port_parameter_get(camera_info->control, &param.hdr);
+         if (status == MMAL_SUCCESS && param.num_cameras > cam_num)
+         {
+            if (!strncmp(param.cameras[cam_num].camera_name, "toshh2c", 7))
+            {
+               fprintf(stderr, "The driver for the TC358743 HDMI to CSI2 chip you are using is NOT supported.\n");
+               fprintf(stderr, "They were written for a demo purposes only, and are in the firmware on an as-is\n");
+               fprintf(stderr, "basis and therefore requests for support or changes will not be acted on.\n\n");
+            }
+         }
+      }
+
+      mmal_component_destroy(camera_info);
+   }
+}
 
 /**
  * Dump image state parameters to stderr.
@@ -952,12 +985,6 @@ static int parse_cmdline(int argc, const char **argv, RASPIVID_STATE *state)
    {
       fprintf(stderr, "Invalid command line option (%s)\n", argv[i-1]);
       return 1;
-   }
-
-   // Always disable verbose if output going to stdout
-   if (state->filename && state->filename[0] == '-')
-   {
-      state->verbose = 0;
    }
 
    return 0;
@@ -2555,6 +2582,8 @@ int main(int argc, const char **argv)
       dump_status(&state);
    }
 
+   check_camera_model(state.cameraNum);
+
    // OK, we have a nice set of parameters. Now set up our components
    // We have three components. Camera, Preview and encoder.
 
@@ -2713,9 +2742,6 @@ int main(int argc, const char **argv)
             if (state.filename[0] == '-')
             {
                state.callback_data.file_handle = stdout;
-
-               // Ensure we don't upset the output stream with diagnostics/info
-               state.verbose = 0;
             }
             else
             {
