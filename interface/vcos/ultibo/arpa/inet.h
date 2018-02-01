@@ -151,6 +151,10 @@ char		*inet_net_ntop(int, const void *, int, char *, size_t);
 int		 inet_net_pton(int, const char *, void *, size_t);
 unsigned	 inet_nsap_addr(const char *, unsigned char *, int);
 char		*inet_nsap_ntoa(int, const unsigned char *, char *);
+uint32_t	 htonl(uint32_t hostlong);
+uint16_t	 htons(uint16_t hostshort);
+uint32_t	 ntohl(uint32_t netlong);
+uint16_t	 ntohs(uint16_t netshort);
 __END_DECLS
 
 #endif /* !_ARPA_INET_H_ */
