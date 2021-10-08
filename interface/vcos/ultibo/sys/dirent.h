@@ -1,17 +1,21 @@
 #ifndef _SYS_DIRENT_H
 #define _SYS_DIRENT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <sys/types.h>
 #include <sys/lock.h>
 
 struct dirent
   {
 #ifndef __USE_FILE_OFFSET64
-    __ino_t d_ino;
-    __off_t d_off;
+    ino_t d_ino;
+    off_t d_off;
 #else
-    __ino64_t d_ino;
-    __off64_t d_off;
+    ino64_t d_ino;
+    off64_t d_off;
 #endif
     unsigned short int d_reclen;
     unsigned char d_type;
@@ -21,8 +25,8 @@ struct dirent
 #ifdef __USE_LARGEFILE64
 struct dirent64
   {
-    __ino64_t d_ino;
-    __off64_t d_off;
+    ino64_t d_ino;
+    off64_t d_off;
     unsigned short int d_reclen;
     unsigned char d_type;
     char d_name[256];		/* We must not include limits.h! */
@@ -83,6 +87,14 @@ int scandir (const char *__dir,
              int (*compar) (const struct dirent **, const struct dirent **));
 
 int alphasort (const struct dirent **__a, const struct dirent **__b);
+#else
+long telldir (DIR *);
+void seekdir (DIR *, off_t loc);
+    
 #endif /* _POSIX_SOURCE */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
