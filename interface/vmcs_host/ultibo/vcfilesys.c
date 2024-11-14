@@ -48,6 +48,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <assert.h>
 #include <ctype.h>
 #include <limits.h>
+#include <sys/syslimits.h>
 
 #if defined(__GLIBC__) && !defined( __USE_FILE_OFFSET64 )
 #error   "__USE_FILE_OFFSET64 isn't defined"
@@ -61,7 +62,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vchost.h"
 #undef dirent
 
-//#include <dirent.h> //To Do //Ultibo
+#include <dirent.h>
 
 #include "vc_fileservice_defs.h"
 
@@ -85,7 +86,7 @@ Local types and defines.
 
 struct fs_dir
 {
-   //DIR *dhandle; //To Do //Ultibo
+   DIR *dhandle;
    int pathlen;
    char pathbuf[PATH_MAX];
 };
@@ -506,8 +507,6 @@ int vc_hostfs_closedir(void *dhandle)
 
    DEBUG_MINOR( "vc_hostfs_closedir(%p)", dhandle );
 
-   //To Do //Ultibo
-   /*
    if (dhandle && fsdir->dhandle)
    {
       (void)closedir(fsdir->dhandle);
@@ -515,7 +514,6 @@ int vc_hostfs_closedir(void *dhandle)
       free(fsdir);
       ret = 0;
    }
-   */
 
    return ret;
 }
@@ -709,8 +707,6 @@ void *vc_hostfs_opendir(const char *dirname)
 
    DEBUG_MINOR( "vc_hostfs_opendir: '%s'", dirname );
    
-   //To Do //Ultibo
-   /*
    if (dirname && dirname[0])
    {
       fsdir = (struct fs_dir *)malloc(sizeof(struct fs_dir));
@@ -723,10 +719,8 @@ void *vc_hostfs_opendir(const char *dirname)
          memcpy(fsdir->pathbuf, dirname, len);
 
          backslash_to_slash(fsdir->pathbuf);
-         */
 
          /* Remove any trailing slashes */
-         /*
          while (fsdir->pathbuf[len - 1] == '/')
             len--;
 
@@ -747,7 +741,6 @@ void *vc_hostfs_opendir(const char *dirname)
          }
       }
    }
-   */
    
    return fsdir;
 }
@@ -779,18 +772,14 @@ struct fs_dirent *vc_hostfs_readdir_r(void *dhandle, struct fs_dirent *result)
 
    if (fsdir && result)
    {
-      //To Do //Ultibo
-      /*
       struct dirent *dent;
 
       while ((dent = readdir(fsdir->dhandle)) != NULL)
       {
          struct stat statbuf;
          int ret;
-         */
 
          /* Append the filename, and stat the resulting path */
-         /*
          fsdir->pathbuf[fsdir->pathlen] = '/';
          vcos_safe_strcpy(fsdir->pathbuf, dent->d_name, sizeof(fsdir->pathbuf), fsdir->pathlen + 1);
          ret = stat(fsdir->pathbuf, &statbuf);
@@ -818,9 +807,6 @@ struct fs_dirent *vc_hostfs_readdir_r(void *dhandle, struct fs_dirent *result)
          rewinddir(fsdir->dhandle);
          result = NULL;
       }
-      */
-      result = NULL;
-      
    }
    else
    {
