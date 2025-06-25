@@ -30,6 +30,7 @@ add_definitions(-DULTIBO)
 
 # enable dynamic reent support in newlib
 add_definitions(-D__DYNAMIC_REENT__)
+add_definitions(-D_REENT_BACKWARD_BINARY_COMPAT)
 
 # enable sbrk
 add_definitions(-D_HAVE_SBRK)
@@ -43,5 +44,6 @@ add_definitions(-D_UNIX98_THREAD_MUTEX_ATTRIBUTES)
 add_definitions(-Wno-error=format)
 
 # pull in declarations of lseek64 and friends
+add_definitions(-D__LARGE64_FILES)
 add_definitions(-D_LARGEFILE64_SOURCE)
 
